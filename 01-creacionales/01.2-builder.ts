@@ -50,24 +50,35 @@ class QueryBuilder {
   }
 
   select(...fields: string[]): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.fields = fields;
+    return this;
   }
 
   where(condition: string): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.conditions.push(condition)
+    return this;
+
   }
 
   orderBy(field: string, direction: 'ASC' | 'DESC' = 'ASC'): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.orderFields.push(`order by ${field} ${direction}`);
+    return this;
+
   }
 
   limit(count: number): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.limitCount = count;
+    return this;
   }
 
   execute(): string {
     // Select id, name, email from users where age > 18 and country = 'Cri' order by name ASC limit 10;
-    throw new Error('Method not implemented.');
+    const fields = this.fields ? this.fields : '*'
+    const where = this.conditions.length ? `WHERE ${this.conditions.join(' AND ')}` : '';
+    const order = this.orderFields.length ? this.orderFields.join(', ') : '';
+    const limit = this.limitCount ? `LIMIT ${this.limitCount}` : '';
+    const consult = `SELECT ${fields} from ${this.table} ${where} ${order} ${limit}`
+    return consult
   }
 }
 
@@ -76,6 +87,7 @@ function main() {
     .select('id', 'name', 'email')
     .where('age > 18')
     .where("country = 'Cri'") // Esto debe de hacer una condición AND
+    .orderBy('name', 'ASC')
     .orderBy('name', 'ASC')
     .limit(10)
     .execute();
